@@ -36,7 +36,7 @@ npm i ts-node nodemon --save-dev
 ```
 10.
 ```bash
-
+npm i prisma @prisma/client
 ```
 11.
 ```bash
