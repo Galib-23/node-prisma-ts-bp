@@ -7,6 +7,12 @@ import { BadRequestException } from "../exceptions/bad-requests";
 import { ErrorCode } from "../exceptions/root";
 import { SignUpSchema } from "../schema/users";
 import { NotFoundException } from "../exceptions/not-found";
+import { User } from "@prisma/client";
+declare module 'express' {
+  interface Request {
+      user?: User
+  }
+}
 
 export const signup = async (
   req: Request,
@@ -61,6 +67,13 @@ export const login = async (
     },
     JWT_SECRET,
   );
-
   res.json({ user, token });
 };
+
+
+// /me -> return the logged in user
+
+export const me = async (req: Request, res: Response) => {
+
+  res.json(req.user);
+}
