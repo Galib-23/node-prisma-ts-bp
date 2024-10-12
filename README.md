@@ -10,43 +10,12 @@ npm i typescript --save-dev
 ```bash
 npx tsc --init
 ```
-4.
-```bash
-npm i @types/node --save-dev
-```
+
 5.
 ```bash
-mkdir src
-```
-6.
-```bash
-touch index.ts
+npm i @types/node @types/express ts-node nodemon --save-dev
 ```
 7.
 ```bash
-npm i express
-```
-8.
-```bash
-npm i @types/express --save-dev
-```
-9.
-```bash
-npm i ts-node nodemon --save-dev
-```
-10.
-```bash
-npm i prisma @prisma/client
-```
-11.
-```bash
-
-```
-12.
-```bash
-
-```
-13.
-```bash
-
+npm i express prisma @prisma/client bcrypt jsonwebtoken
 ```

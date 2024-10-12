@@ -1,31 +1,46 @@
-import { Request, Response } from "express";
+import { NextFunction, Request, Response } from "express";
 import { prismaClient } from "..";
 import { compareSync, hashSync } from "bcrypt";
-import * as jwt from 'jsonwebtoken';
+import * as jwt from "jsonwebtoken";
 import { JWT_SECRET } from "../../secrets";
+import { BadRequestException } from "../exceptions/bad-requests";
+import { ErrorCode } from "../exceptions/root";
+import { SignUpSchema } from "../schema/users";
 
-export const signup = async (req: Request, res: Response) => {
-  const { email, password, name } = req.body;
+export const signup = async (
+  req: Request,
+  res: Response,
+  next: NextFunction,
+) => {
+  const validateData = SignUpSchema.parse(req.body);
   let user = await prismaClient.user.findFirst({
     where: {
-      email: email,
+      email: validateData.email,
     },
   });
   if (user) {
-    throw Error("User already exists");
+    next(
+      new BadRequestException(
+        "User already exists",
+        ErrorCode.USER_ALREADY_EXISTS,
+      ),
+    );
   }
   user = await prismaClient.user.create({
     data: {
-      name,
-      email,
-      password: hashSync(password, 10),
-    }
-  })
+      name: validateData.name,
+      email: validateData.email,
+      password: hashSync(validateData.password, 10),
+    },
+  });
   res.json(user);
 };
 
-
-export const login = async (req: Request, res: Response) => {
+export const login = async (
+  req: Request,
+  res: Response,
+  next: NextFunction,
+) => {
   const { email, password } = req.body;
   let user = await prismaClient.user.findFirst({
     where: {
@@ -33,15 +48,17 @@ export const login = async (req: Request, res: Response) => {
     },
   });
   if (!user) {
-    throw Error("User doesn't exists");
+    throw Error("User not found");
   }
   if (!compareSync(password, user.password)) {
     throw Error("Wrong Credentials");
   }
-  const token = jwt.sign({
-    userId: user.id
-  }, JWT_SECRET);
+  const token = jwt.sign(
+    {
+      userId: user.id,
+    },
+    JWT_SECRET,
+  );
 
-  res.json({user, token});
-
+  res.json({ user, token });
 };
