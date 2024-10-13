@@ -68,7 +68,7 @@ export const listProducts = async (req: Request, res: Response) => {
 export const getProductById = async (req: Request, res: Response) => {
   try {
     const productId = parseInt(req.params.id);
-    const product = await prismaClient.product.findFirst({
+    const product = await prismaClient.product.findFirstOrThrow({
       where: {
         id: productId
       }
@@ -76,7 +76,7 @@ export const getProductById = async (req: Request, res: Response) => {
     res.json(product);
   } catch (error) {
     throw new NotFoundException(
-      "Product not found",
+      "Product not found", 
       ErrorCode.PRODUCT_NOT_FOUND,
     );
   }

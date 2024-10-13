@@ -9,6 +9,7 @@ export const errorHandler = (method: Function) => {
     try {
       await method(req, res, next);
     } catch (error: any) {
+      console.log("ERROR: ----------> ", error)
       let exception: HttpException;
       if (error instanceof HttpException) {
         exception = error;
